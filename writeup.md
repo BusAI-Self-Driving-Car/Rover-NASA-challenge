@@ -79,7 +79,6 @@ The left top, right top and the left bottom are the origianl, the warped and the
 
 The `process_image()` function is generally follow the procedure described in above but in one function. The function accepts a RGB image captured by the camera. After perspective transformation, color filtering and coordinate transformation, the navigable terrain, the obstacles and the rock are represented in the output image and provide a reference heading for the next move of the rover.
 
-![alt text][image2]
 ### Autonomous Navigation and Mapping
 
 #### 1. Fill in the `perception_step()` (at the bottom of the `perception.py` script) and `decision_step()` (in `decision.py`) functions in the autonomous mapping scripts and an explanation is provided in the writeup of how and why these functions were modified as they were.
