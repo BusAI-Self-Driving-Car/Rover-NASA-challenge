@@ -1,5 +1,5 @@
 import numpy as np
-
+import time
 
 # This is where you can build a decision tree for determining throttle, brake and steer 
 # commands based on the output of the perception_step() function
@@ -8,6 +8,31 @@ def decision_step(Rover):
     # Implement conditionals to decide what to do given perception data
     # Here you're all set up with some basic functionality but you'll need to
     # improve on this decision tree to do a good job of navigating autonomously!
+
+    # Check if the rover is caught in a doughnut
+    if Rover.steer == 15 or Rover.steer == -15:
+        # If the wheels are full over for more than 10 seconds, in a doughnut
+        if time.time() - Rover.wheel_lock < Rover.max_wheel_lock:
+            # Initiate doughnut mode
+            print('STEERING LOCK DETECTED')
+            Rover.mode = 'doughnut'
+
+    # Rover is caught in a doughnut so try to escape it
+    if Rover.mode == 'doughnut':
+        print('DOUGHNUT EVASION INITIATED!!')
+        if time.time() - Rover.wheel_lock > (Rover.max_wheel_lock + 5):
+            Rover.mode = 'forward'
+            Rover.wheel_lock = time.time()
+        else:
+            # Perform evasion to get out of doughnut
+            Rover.throttle = 0
+            Rover.brake = Rover.brake_set
+            if Rover.steer > 0:
+                Rover.steer = -15
+            else:
+                Rover.steer = 15
+        # If in doughnut mode, exit function after evasion performed
+        return Rover
 
     # Example:
     # Check if we have vision data to make decisions with

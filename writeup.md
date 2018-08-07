@@ -56,6 +56,8 @@ a) Perspective transformation is applied for location and projection on the bird
 
 b）As in common, color transformation is used to separate the navigable area and the non-navigable. There is a clear boundary between the two since the navigable part is much lighter in color.
 
+The thresh values [160, 160, 160] are carefully picked up using trial and error. From the original RGB image, the navigable areas are much brighter than else. So we can use a lower limit to remain the navigable areas. An efficient way is to use binary search to find the proper value. Here we believe the values we choose are perfect enough since it capture all the bright areas.
+
 ![alt text][image5]
 
 c) Similarly, the obstacles and the rock can be colored with adjusted the thresholds and the below are processed results.
@@ -84,6 +86,12 @@ The `process_image()` function is generally follow the procedure described in ab
 #### 1. Fill in the `perception_step()` (at the bottom of the `perception.py` script) and `decision_step()` (in `decision.py`) functions in the autonomous mapping scripts and an explanation is provided in the writeup of how and why these functions were modified as they were.
 
 The `perception_step()` function is populated in a similar way with `procerss_image()` as described above. The main difference is the input argument is a `RoberState` object called `Rover` instead of an image. In `Rover`, there is everything we need including the camera image, the immediate position of the rover and the according angle.
+
+In the end of the `perception_step()` function a world map is generated including the view in the rover centered coordinate. Red, Green and Blue pixels are representing obstacles, rocks and navigable terrains respectively. Also on the map, the explored areas are colored in the same way. The rock color finally will be in white by color overlapping.
+
+The `decesion_step()` gets the perception information and decide the next steering. Originally, the mean angle of all the pixels is used but in practice, it often gets stuck in a circular track. Given a bias to the left or the right, the problem could be solved. The steering choosing is more aggressive in this way so it can explore more areas.
+
+Here I tried to check if it was get stuck by measuring the steering angle and the time duration. If it keep an upper limit or a lower limit angle for quite a long time, I would assume it get stuck and a command would be sent to switch the steering to the opposite side only to escape the situation.
 
 #### 2. Launching in autonomous mode your rover can navigate and map autonomously.  Explain your results and how you might improve them in your writeup.  
 
